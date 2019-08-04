@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-let usuario = new Schema({
+const usuario = new Schema({
     nombre: { type: String, required:true },
     correo: String,
-    clave: String,
+    clave: String
     
 });
 

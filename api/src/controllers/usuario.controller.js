@@ -9,16 +9,16 @@ usuario.listarUsuarios = async (req, res) => {
         await disconnect();
         res.json(listaUsuarios);
     } catch (error) {
-        res.status(400).json(error);
+        res.status(400).json({ message: `Error al listar - ${error}` });
     }
 }
 
 usuario.agregarUsuario = async (req,res) => {
     try {
         await connect();
-        let nuevoUsuario = new ModeloUsuario({
-            nombre: req.body.nom,
-            correo: req.boyd.correo,
+        const nuevoUsuario = new ModeloUsuario({
+            nombre: req.body.nombre,
+            correo: req.body.correo,
             clave: req.body.clave
         })
        
@@ -28,7 +28,7 @@ usuario.agregarUsuario = async (req,res) => {
             message: 'Registro correcto'
         })
     } catch (error) {
-        res.status(400).json(error);
+        res.status(400).json({ message: `Error metodo agregar! - ${error}` });
     }
 };
 
@@ -48,18 +48,22 @@ usuario.actualizaUsuario = async (req, res) => {
             update
           });
     } catch (error) {
-        res.status(400).json(error);
+        res.status(400).json({ message: `Error metodo actualizar! -  ${error}` });
     }
 }
 
 usuario.eliminaUsuario = async (req, res) => {
-    const { id } = req.params;
-    await connect();
-    await ModeloUsuario.findByIdAndRemove(id);
-    await disconnect();
-    res.json({
-      message: `Usuario ${id} eliminado`
-    });
+    try {
+        const { id } = req.params;
+        await connect();
+        await ModeloUsuario.findByIdAndRemove(id);
+        await disconnect();
+        res.json({
+        message: `Usuario ${id} eliminado`
+        });
+    } catch (error) {
+        res.status(400).json({ message: `Error metodo Eliminar! - ${error}` });
+    }
 };
 
 module.exports = usuario;
