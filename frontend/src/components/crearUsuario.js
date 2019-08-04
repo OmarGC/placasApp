@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, Card } from 'react-bootstrap';
+import { Row, Col, Card, Button } from 'react-bootstrap';
 
 export default class crearUsuario extends Component {
 
@@ -22,6 +22,22 @@ export default class crearUsuario extends Component {
         this.setState({nombreUsuario: e.target.value});
     }
 
+    onSubmit = async (e) => {
+        e.preventDefault();
+        let data = { nombre: this.state.nombreUsuario };
+        await fetch('http://localhost:4000/api/usuarios/add', {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(data), // data can be `string` or {object}!
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+
+        });
+        this.setState({ nombreUsuario: '' });
+        this.obtenerUsuarios();
+    }
+
     render() {
         return (
             <Row>
@@ -29,10 +45,12 @@ export default class crearUsuario extends Component {
                     <Card>
                         <Card.Body>
                             <h3>Crear nuevo usuario</h3>
-                            <form>
+                            <form onSubmit={this.onSubmit}>
                                 <div className="form-group" >
-                                    <input type="text" className="form-control" onChange={this.onchangeUserName} />
+                                    <input type="text" value={this.state.nombreUsuario} className="form-control" onChange={this.onchangeUserName} />
                                 </div>
+
+                                <Button type="submit" variant="outline-success">Guardar usuario</Button>
                             </form>
                         </Card.Body>
                     </Card>
