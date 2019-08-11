@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col, Card, Button } from 'react-bootstrap';
+import { Form, Row, Col, Card, Button } from 'react-bootstrap';
 
 export default class crearUsuario extends Component {
     constructor(props) {
@@ -21,6 +21,7 @@ export default class crearUsuario extends Component {
         }
 
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     
@@ -41,7 +42,20 @@ export default class crearUsuario extends Component {
         this.setState( { [name]: value }, () => { this.validateField(name, value) } );
     }
 
-    onSubmit = async (e) => {
+    clearInputs() {
+      this.setState({ nameUser: '' });
+      this.setState({ email: '' });
+      this.setState({ password: '' });
+      this.setState({ telefono: '' });
+      this.setState({ password: ''});
+      this.setState({ formValid: false })
+      this.setState({ nameUserValid: false });
+      this.setState({ emailValid: false });
+      this.setState({ telefonoValid: false });
+      this.setState({ passwordValid: false });
+    }
+
+    async onSubmit(e) {
         e.preventDefault();
         let data = { nombre: this.state.nameUser, correo: this.state.email, clave: this.state.password, telefono: this.state.telefono };
         await fetch('http://localhost:4000/api/usuarios/add', {
@@ -53,11 +67,7 @@ export default class crearUsuario extends Component {
             }
 
         });
-        this.setState({ nameUser: '' });
-        this.setState({ email: '' });
-        this.setState({ password: '' });
-        this.setState({ telefono: '' });
-        this.setState({ password: ''});
+        this.clearInputs();
         this.obtenerUsuarios();
     }
 
@@ -86,22 +96,25 @@ export default class crearUsuario extends Component {
     
         switch(fieldName) {
           case 'nameUser':
-            let regexUser = new RegExp("^[a-zA-Z áéíóúAÉÍÓÚÑñ]+$");
+            let regexUser = new RegExp(/^[a-zA-Z áéíóúAÉÍÓÚÑñ]+$/);
             nameUserValid = regexUser.test(value);
-            fieldValidationErrors.nameUser = nameUserValid ? '': ' is invalid';
+            fieldValidationErrors.nameUser = nameUserValid ? '': 'El nombre no debe tener numeros, ni caracteres especiales.';
             break;
           case 'email':
-            emailValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-            fieldValidationErrors.email = emailValid ? '' : ' is invalid';
+            let regexEmail = new RegExp(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
+            emailValid = regexEmail.test(value);
+            fieldValidationErrors.email = emailValid ? '' : 'El correo electronico no es valido';
             break;
           case 'telefono':
-            let regexTel = new RegExp("^[0-9]+$")
+            let regexTel = new RegExp(/^([0-9]{10})+$/)
             telefonoValid = regexTel.test(value);
-            fieldValidationErrors.telefono = telefonoValid ? '': ' is invalid';
+            fieldValidationErrors.telefono = telefonoValid ? '': 'El numero de telefono no tiene que contener mas de 10 digitos y no se aceptan letras';
+            // telefonoValid = value.length >= 10;
+            // fieldValidationErrors.telefono = telefonoValid ? '': ' is to short';
             break;
           case 'password':
             passwordValid = value.length >= 6;
-            fieldValidationErrors.password = passwordValid ? '': ' is too short';
+            fieldValidationErrors.password = passwordValid ? '': 'La contraseña debe tiener mas de 6 caracteres';
             break;
           default:
             break;
@@ -111,7 +124,8 @@ export default class crearUsuario extends Component {
               formErrors: fieldValidationErrors,
               nameUserValid: nameUserValid,
               emailValid: emailValid,
-              telefonoValid: telefonoValid
+              telefonoValid: telefonoValid,
+              passwordValid: passwordValid
             },
             this.validateForm
         );
@@ -128,6 +142,24 @@ export default class crearUsuario extends Component {
       }
     }
 
+    onlyLetters(e) {
+      let key = window.event ? e.which : e.keyCode;
+      let keyboardKey = String.fromCharCode(key).toLowerCase();
+      let letters = " áéíóúabcdefghijklmnñopqrstuvwxyz";
+      let specials = "8-37-39-46";
+      let keySpecial = false;
+      for(var i in specials){
+        if(key === specials[i]){
+            keySpecial = true;
+            break;
+        }
+      }
+
+      if(letters.indexOf(keyboardKey)===-1 && !keySpecial){
+        e.preventDefault();
+      }
+    }
+
     disableEnter(e) {
       let key = window.event ? e.which : e.keyCode;
       if ( key === 13) {
@@ -135,61 +167,86 @@ export default class crearUsuario extends Component {
       }
     }
 
+    notCopyAndPaste(e) {
+      e.preventDefault();
+      alert("Not Copy!");
+    }
+
     render() {
+      
         return (
             <Row>
                 <Col md={5}>
                     <Card className="mb-5">
                         <Card.Body>
                             <h3>Crear nuevo usuario</h3>
-                            <form onSubmit={this.onSubmit}>
+                            <Form onSubmit={this.onSubmit}>
                                 <div className="form-group" >
-                                    <label htmlFor="nameUser">Nombre:</label>
-                                    <input type="text"
+                                    <label htmlFor="nameUser">Nombre completo:</label>
+                                    <input type="text" id="nameUser"
                                       name="nameUser"
                                       className="form-control"
                                       maxLength="30"
                                       value={this.state.nameUser}
+                                      onPaste={this.notCopyAndPaste}
+                                      onKeyPress={this.onlyLetters}
                                       onKeyDown={this.disableEnter}
                                       onChange={this.handleInputChange}
                                     />
+                                    <small className="form-text" style={{color: 'red'}}>
+                                      {this.state.formErrors.nameUser}
+                                    </small>
                                 </div>
                                 <div className="form-group" >
                                     <label htmlFor="email">Correo: </label>
-                                    <input type="email"
+                                    <input type="email" id="email"
                                       name="email"
                                       className="form-control"
                                       value={this.state.email}
+                                      onPaste={this.notCopyAndPaste}
                                       onKeyDown={this.disableEnter}
                                       onChange={this.handleInputChange}
                                     />
+                                    <small className="form-text" style={{color: 'red'}}>
+                                      {this.state.formErrors.email}
+                                    </small>
                                 </div>
                                 <div className="form-group" >
-                                   <label htmlFor="telefono">telefono: </label>
-                                    <input type="tel" 
+                                   <label htmlFor="telefono">Telefono celular: </label>
+                                    <input type="tel" id="telefono"
                                       name="telefono"
                                       className="form-control"
-                                      maxLength="10"
+                                      minLength="10"
+                                      maxLength="15"
+                                      onPaste={this.notCopyAndPaste}
                                       value={this.state.telefono} 
                                       onKeyPress={this.onlyNumbers}
                                       onChange={this.handleInputChange}
                                     />
+                                    <small className="form-text" style={{color: 'red'}}>{ this.state.formErrors.telefono }</small>
                                 </div>
                                 <div className={`form-group ${this.errorClass(this.state.formErrors.password)}`}>
-                                    <label htmlFor="password">Clave: </label>
-                                    <input type="password"
+                                    <label htmlFor="password">Contraseña: </label>
+                                    <input type="password" id="password"
                                       name="password"
                                       className="form-control"
                                       minLength="6"
-                                      value={this.state.password}
+                                      value={this.state.password}                                      
+                                      onCopy={this.notCopyAndPaste}
+                                      onPaste={this.notCopyAndPaste}
                                       onKeyDown={this.disableEnter}
-                                      onChange={this.handleInputChange} />
+                                      onChange={this.handleInputChange}
+                                    />
+                                    <small className="form-text" style={{color: 'red'}}>{ this.state.formErrors.password }</small>
+                                    
                                 </div>
 
-                                <Button type="submit" variant="outline-success">Guardar usuario</Button>
-                            </form>
+                                <Button type="submit" variant="outline-success" disabled={!this.state.formValid}>Guardar usuario</Button>
+                            </Form>
                         </Card.Body>
                     </Card>
+                    <p>{JSON.stringify(this.state.formErrors)}</p>
+                    <p>Valid: {JSON.stringify(this.state.formValid)}</p>
                 </Col>
                 
                 <Col md={7}>
