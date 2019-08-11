@@ -147,15 +147,15 @@ export default class crearUsuario extends Component {
       let keyboardKey = String.fromCharCode(key).toLowerCase();
       let letters = " áéíóúabcdefghijklmnñopqrstuvwxyz";
       let specials = "8-37-39-46";
-      let keySpecial = false;
+      let specialKey = false;
       for(var i in specials){
         if(key === specials[i]){
-            keySpecial = true;
+            specialKey = true;
             break;
         }
       }
 
-      if(letters.indexOf(keyboardKey)===-1 && !keySpecial){
+      if(letters.indexOf(keyboardKey)===-1 && !specialKey){
         e.preventDefault();
       }
     }
