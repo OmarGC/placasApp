@@ -19,6 +19,7 @@ usuario.agregarUsuario = async (req,res) => {
         const nuevoUsuario = new ModeloUsuario({
             nombre: req.body.nombre,
             correo: req.body.correo,
+            telefono: req.body.telefono,
             clave: req.body.clave
         })
        
