@@ -55,6 +55,7 @@ export default class crearPlaca extends Component {
     
         switch(fieldName) {
           case 'userSelected':
+            // let RegexUserSelect = new RegExp(/ +$/)
             userSelectedValid = value 
             fieldValidationErrors.userSelected = userSelectedValid === "" ? "Tiene que seleccionar una opcion!" : "" 
             break;
