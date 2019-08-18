@@ -73,14 +73,17 @@ export default class crearUsuario extends Component {
 
     async deleteUser(_id) {
       console.log(_id);
-      await fetch('http://localhost:4000/api/usuarios/' + _id, {
-        method: 'DELETE', // or 'PUT'
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-      });
-      this.obtenerUsuarios();    
+      const res = window.confirm('¿Seguro que lo quieres eliminar?');
+      if(res) {
+        await fetch('http://localhost:4000/api/usuarios/' + _id, {
+          method: 'DELETE', // or 'PUT'
+          headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+          }
+        });
+        this.obtenerUsuarios(); 
+      }
     }
 
     validateForm() {

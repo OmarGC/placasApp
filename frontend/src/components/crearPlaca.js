@@ -101,7 +101,7 @@ class crearPlaca extends Component {
             fieldValidationErrors.userSelected = userSelectedValid === "" ? "Tiene que seleccionar una opcion!" : "" 
             break;
           case 'name':
-            let regexName = new RegExp(/^[a-zA-Z áéíóúAÉÍÓÚÑñ]+$/);
+            let regexName = new RegExp(/^[a-zA-Z áéíóúAÉÍÓÚÑñ 0-9]+$/);
             nameValid = regexName.test(value);
             fieldValidationErrors.name = nameValid ? '' : 'El nombre no debe tener numeros, ni caracteres especiales.';
             break;
