@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Button, Form, Row, Col, Card } from 'react-bootstrap';
+import { withRouter } from 'react-router-dom'
 
-export default class crearPlaca extends Component {
+class crearPlaca extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -36,11 +37,22 @@ export default class crearPlaca extends Component {
         let name = e.target.name;
         let value = e.target.value;
         this.setState({ [name]: value }, () => { this.validateField(name, value) } )
-        console.log(name)
     }
 
-    onSubmit(e) {
+    async onSubmit(e) {
       e.preventDefault();
+      let data = { idusuario: this.state.userSelected, nom: this.state.name, modelo: this.state.model };
+      await fetch('http://localhost:4000/api/placas/add', {
+        method: 'POST', // or 'PUT'
+         body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+
+      });
+      console.log("Placa creada:", data.nom)
+      this.props.history.push('/');
     }
 
     validateForm() {
@@ -65,7 +77,7 @@ export default class crearPlaca extends Component {
             fieldValidationErrors.name = nameValid ? '' : 'El nombre no debe tener numeros, ni caracteres especiales.';
             break;
           case 'model':
-            let regexModel = new RegExp(/^[a-zA-Z áéíóúAÉÍÓÚÑñ]+$/);
+            let regexModel = new RegExp(/^[a-zA-Z áéíóúAÉÍÓÚÑñ 0-9]+$/);
             modelValid = regexModel.test(value);
             fieldValidationErrors.model = modelValid ? '': 'error!';
             // telefonoValid = value.length >= 10;
@@ -88,13 +100,14 @@ export default class crearPlaca extends Component {
 
 
     render() {
+      
         return (
             <Row>
               <Col md={6} className="offset-md-3">
                 <Card>
                   <Card.Body>
                     <h4>Crea una nueva placa</h4>
-                    <Form onSubmit={this.onSubmit}>
+                    <Form onSubmit={ this.onSubmit }>
                       {/* Select user */}
                       <div className="form-group">
                          <label htmlFor="user">Usuario:</label>
@@ -157,3 +170,4 @@ export default class crearPlaca extends Component {
         )
     }
 }
+export default withRouter(crearPlaca); // para acceder a history tienes resiver el componenete como parametros del metodo withRouter

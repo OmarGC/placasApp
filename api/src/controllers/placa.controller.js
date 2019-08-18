@@ -17,6 +17,7 @@ placa.postPlaca = async (req, res) => {
     try {
         await connect();
         let PlacaNueva = new ModelPlaca({
+            idUsuario: req.body.idusuario,
             nombre: req.body.nom,
             imagen: req.body.imagen,
             modelo: req.body.modelo
