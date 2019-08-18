@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Row, Col, Card, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { format } from 'timeago.js'
 
 export default class listaPlacas extends Component {
@@ -37,8 +38,12 @@ export default class listaPlacas extends Component {
                   this.state.placas.map(placa => (
                     <Col md={4} className="p-2" key={placa._id}>
                         <Card>
-                          <Card.Header>
+                          <Card.Header className="d-flex justify-content-between">
                               <h5> { placa.nombre } </h5>
+                              <Link className="btn btn-primary" to={"/editar/" + placa._id}>
+                                Edit
+                              </Link>
+                              
                           </Card.Header>
                           <Card.Body>
                             <p> { placa.idUsuario } </p>

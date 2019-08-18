@@ -2,7 +2,7 @@ const ModelPlaca = require('../models/placa.model');
 const { connect, disconnect } = require('../config/database');
 const placa = {};
 
-placa.getPlaca = async (req, res) => {
+placa.getPlacas = async (req, res) => {
     try {
         await connect();
         let placas = await ModelPlaca.find();
@@ -13,12 +13,23 @@ placa.getPlaca = async (req, res) => {
     }
 }
 
+placa.getPlaca = async (req, res) => {
+    try {
+        await connect();
+        let placa = await ModelPlaca.findById(req.params.id);
+        await disconnect();
+        res.json(placa)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
 placa.postPlaca = async (req, res) => {
     try {
         await connect();
         let PlacaNueva = new ModelPlaca({
-            idUsuario: req.body.idusuario,
-            nombre: req.body.nom,
+            idUsuario: req.body.idUsuario,
+            nombre: req.body.nombre,
             imagen: req.body.imagen,
             modelo: req.body.modelo
         });

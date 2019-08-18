@@ -18,12 +18,30 @@ class crearPlaca extends Component {
             userSelectedValid: false,
             nameValid: false,
             modelValid: false,
+
+            editing: false,
+            _id: ''
         }
         this.onSubmit = this.onSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
     }
-    componentDidMount(){
+    async componentDidMount() {
       this.getUsers();
+      if(this.props.match.params.id) {
+        const placa = await fetch('http://localhost:4000/api/placas/' + this.props.match.params.id);
+        let res = await placa.json();
+        this.setState({
+          userSelected: res.idUsuario,
+          name: res.nombre,
+          model: res.modelo,
+          editing: true,
+          _id: this.props.match.params.id,
+
+          userSelectedValid: true,
+          nameValid: true,
+          modelValid: true
+        });
+      }
     }
 
     async getUsers() {
@@ -41,17 +59,28 @@ class crearPlaca extends Component {
 
     async onSubmit(e) {
       e.preventDefault();
-      let data = { idusuario: this.state.userSelected, nom: this.state.name, modelo: this.state.model };
-      await fetch('http://localhost:4000/api/placas/add', {
-        method: 'POST', // or 'PUT'
-         body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-
-      });
-      console.log("Placa creada:", data.nom)
+      let data = { idUsuario: this.state.userSelected, nombre: this.state.name, modelo: this.state.model };
+      if(this.state.editing) {
+        await fetch('http://localhost:4000/api/placas/' + this.state._id, {
+          method: 'PUT', // or 'PUT'
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+      } else {
+        await fetch('http://localhost:4000/api/placas', {
+          method: 'POST', // or 'PUT'
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+        console.log("Placa creada:", data.nombre)
+      }
+      
       this.props.history.push('/');
     }
 
@@ -115,6 +144,7 @@ class crearPlaca extends Component {
                             className="form-control"
                             name="userSelected"
                             onChange={this.handleInputChange}
+                            value={this.state.userSelected}
                           >
                             {
                               this.state.users.map(user => (

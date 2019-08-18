@@ -27,7 +27,7 @@ export default class crearUsuario extends Component {
     
 
     async componentDidMount(){
-        this.obtenerUsuarios();
+      this.obtenerUsuarios();
     }
 
     obtenerUsuarios = async () => {
@@ -58,7 +58,7 @@ export default class crearUsuario extends Component {
     async onSubmit(e) {
         e.preventDefault();
         let data = { nombre: this.state.nameUser, correo: this.state.email, clave: this.state.password, telefono: this.state.telefono };
-        await fetch('http://localhost:4000/api/usuarios/add', {
+        await fetch('http://localhost:4000/api/usuarios', {
             method: 'POST', // or 'PUT'
             body: JSON.stringify(data), // data can be `string` or {object}!
             headers: {
