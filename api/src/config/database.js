@@ -6,7 +6,7 @@ module.exports = {
     // metodo para conectar a db
 	connect: async function () {
         try {
-            const db = await mongoose.connect(process.env.URI || 'mongodb://127.0.0.1:27017/placas', { 
+            const db = await mongoose.connect(process.env.URI || 'mongodb://127.0.0.1:27017/placas2', { 
                 useCreateIndex: true,
                 useNewUrlParser: true,
                 useFindAndModify: false

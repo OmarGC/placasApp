@@ -46,7 +46,7 @@ export default class listaPlacas extends Component {
                               
                           </Card.Header>
                           <Card.Body>
-                            <p> { placa.idUsuario } </p>
+                            <p> { placa.idUsuario.nombre } </p>
                             <p> { placa.modelo } </p>
                             <p> { format(placa.fecha) } </p>
                           </Card.Body>

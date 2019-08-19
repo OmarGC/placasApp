@@ -13,6 +13,17 @@ placa.getPlacas = async (req, res) => {
     }
 }
 
+placa.getPlacas2 = async (req, res) => {
+    try {
+        await connect();
+        let placas = await ModelPlaca.find().populate('idUsuario');
+        await disconnect();
+        res.json(placas)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
 placa.getPlaca = async (req, res) => {
     try {
         await connect();
